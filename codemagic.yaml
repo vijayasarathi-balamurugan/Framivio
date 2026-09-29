@@ -7,17 +7,15 @@ workflows:
       java: 17
 
     scripts:
-      - name: Set up Gradle
+      - name: Install dependencies
         script: |
-          wget -q https://services.gradle.org/distributions/gradle-8.13-bin.zip
-          unzip -q gradle-8.13-bin.zip
-          export PATH="$PWD/gradle-8.13/bin:$PATH"
-          gradle --version
+          cd Framivio-1.1-source
+          flutter pub get
 
       - name: Build Debug APK
         script: |
-          export PATH="$PWD/gradle-8.13/bin:$PATH"
-          gradle --no-daemon assembleDebug
+          cd Framivio-1.1-source
+          flutter build apk --debug
 
     artifacts:
-      - app/build/outputs/apk/debug/*.apk
+      - Framivio-1.1-source/build/app/outputs/flutter-apk/*.apk
