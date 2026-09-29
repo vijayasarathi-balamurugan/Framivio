@@ -9,12 +9,12 @@ workflows:
     scripts:
       - name: Install dependencies
         script: |
-          cd Framivio-1.1-source
+          cd "$CM_BUILD_DIR/Framivio-1.1-source"
           flutter pub get
 
       - name: Build Debug APK
         script: |
-          cd Framivio-1.1-source
+          cd "$CM_BUILD_DIR/Framivio-1.1-source"
           flutter build apk --debug
 
     artifacts:
