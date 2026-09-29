@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="500" viewBox="0 0 1024 500">
+  <defs><pattern id="dots" width="24" height="24" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.2" fill="#B4BFA9"/></pattern></defs>
+  <rect width="1024" height="500" fill="#F7F5F0"/>
+  <rect x="530" y="20" width="460" height="460" fill="url(#dots)"/>
+  <rect x="64" y="60" width="48" height="48" rx="14" fill="#EC5C42"/>
+  <path d="M77 79V73H83M93 73H99V79M99 89V95H93M83 95H77V89" stroke="#FFF9ED" fill="none" stroke-width="2.7" stroke-linecap="round"/>
+  <path d="M85 79L92 84 85 89Z" fill="#FFF9ED"/>
+  <text x="127" y="94" font-family="Arial,sans-serif" font-size="30" font-weight="bold" fill="#222B27">Framivio<tspan fill="#EC5C42">.</tspan></text>
+  <text x="64" y="207" font-family="Arial,sans-serif" font-size="54" font-weight="bold" letter-spacing="-2" fill="#222B27">One creation.</text>
+  <text x="64" y="276" font-family="Georgia,serif" font-size="61" font-style="italic" fill="#E75A40">Every platform.</text>
+  <text x="67" y="326" font-family="Arial,sans-serif" font-size="19" fill="#6C736B">Your pocket-sized photo &amp; video studio.</text>
+  <rect x="64" y="373" width="191" height="42" rx="21" fill="#E8EDDF"/>
+  <circle cx="87" cy="394" r="4" fill="#688663"/>
+  <text x="103" y="400" font-family="Arial,sans-serif" font-size="14" fill="#344C3A">Made to work offline</text>
+  <g transform="translate(588 131) rotate(-10 105 105)"><rect width="230" height="208" rx="19" fill="#FFF"/><rect x="7" y="7" width="216" height="194" rx="13" fill="#C5D4BC"/><circle cx="69" cy="54" r="24" fill="#F2DDB5"/><path d="M7 148L100 58 223 176V201H7Z" fill="#8EAA87"/><path d="M7 193L159 100 223 160V201H7Z" fill="#496D57"/></g>
+  <g transform="translate(782 85) rotate(9 70 158)"><rect width="154" height="309" rx="25" fill="#FFF"/><rect x="7" y="7" width="140" height="295" rx="20" fill="#D3C7A5"/><circle cx="68" cy="73" r="25" fill="#F2DDB5"/><path d="M7 210L56 130 147 208V285Q147 302 130 302H24Q7 302 7 285Z" fill="#B08F65"/><path d="M7 265L97 180 147 235V285Q147 302 130 302H24Q7 302 7 285Z" fill="#547963"/><circle cx="77" cy="149" r="25" fill="#FFFFFF55"/><path d="M71 137L89 149 71 161Z" fill="#FFFFFF"/><text x="60" y="283" font-family="Arial,sans-serif" font-size="13" fill="#FFFFFF">9:16</text></g>
+</svg>

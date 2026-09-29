@@ -1,0 +1,13 @@
+# Copy to release.properties and fill locally. Never commit the filled file.
+KEYSTORE_PATH=/absolute/path/to/your-upload-key.jks
+KEYSTORE_PASSWORD=
+KEY_ALIAS=
+KEY_PASSWORD=
+APPLICATION_ID=com.vk.creatorfit
+SUPPORT_EMAIL=
+PRIVACY_URL=
+MONETIZATION_ENABLED=false
+ADMOB_APP_ID=
+ADMOB_INTERSTITIAL_ID=
+BILLING_PUBLIC_KEY=
+PRO_PRODUCT_ID=creatorfit_pro_lifetime

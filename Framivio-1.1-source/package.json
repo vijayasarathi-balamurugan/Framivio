@@ -1,0 +1,15 @@
+{
+  "name": "creatorfit-verification",
+  "version": "1.1.0",
+  "private": true,
+  "scripts": {
+    "test": "node --test tests/core.test.cjs tests/render.test.cjs tests/static.test.cjs tests/pdf.test.cjs",
+    "test:ui": "node tests/ui.test.cjs",
+    "preview:bundle": "node scripts/bundle-preview.cjs"
+  },
+  "devDependencies": {
+    "@napi-rs/canvas": "0.1.100",
+    "playwright": "1.62.1",
+    "sharp": "0.35.4"
+  }
+}

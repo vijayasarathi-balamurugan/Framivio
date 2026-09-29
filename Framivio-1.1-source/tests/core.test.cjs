@@ -1,0 +1,13 @@
+const {test}=require('node:test');
+const assert=require('node:assert/strict');
+const {PRESETS,size,placement,cleanName,trim}=require('../app/src/main/assets/core.js');
+test('all built-in presets are valid photo and video output sizes',()=>{const ids=new Set();for(const p of PRESETS){assert.ok(!ids.has(p.id));ids.add(p.id);assert.deepEqual(size(p.w,p.h),{w:p.w,h:p.h});assert.deepEqual(size(p.w,p.h,true),{w:p.w,h:p.h});}});
+test('fit letterboxes portrait into square without losing content',()=>assert.deepEqual(placement(100,200,100,100),{x:25,y:0,w:50,h:100}));
+test('crop fills square and centers overflow',()=>assert.deepEqual(placement(100,200,100,100,'crop'),{x:0,y:-50,w:100,h:200}));
+test('crop position moves between both available edges',()=>{assert.equal(placement(100,200,100,100,'crop',.5,0).y,0);assert.equal(placement(100,200,100,100,'crop',.5,1).y,-100);});
+test('zoom is bounded',()=>{assert.equal(placement(100,100,100,100,'fit',.5,.5,999).w,300);assert.equal(placement(100,100,100,100,'fit',.5,.5,-1).w,100);});
+test('invalid dimensions are rejected instead of silently clamped',()=>{for(const p of [[0,100],[5000,100],[100.1,100],[NaN,100],[100,Infinity]])assert.throws(()=>size(...p));assert.throws(()=>size(101,100,true));assert.throws(()=>size(2048,1080,true));});
+test('invalid source dimensions are rejected',()=>assert.throws(()=>placement(0,100,100,100)));
+test('filenames cannot traverse paths',()=>{assert.equal(cleanName('../../hello.jpg'),'______hello');assert.equal(cleanName('🌎.jpg'),'__');assert.equal(cleanName('A'.repeat(80)+'.png').length,50);});
+test('trim rounds seconds into milliseconds and validates bounds',()=>{assert.deepEqual(trim(1.25,5.5,10),{startMs:1250,endMs:5500});for(const t of [[-1,5,10],[5,5,10],[6,5,10],[0,20,10],['bad',2,10]])assert.throws(()=>trim(...t));});
+test('10,000 geometry cases preserve aspect ratio and framing invariants',()=>{for(let i=1;i<=10000;i++){const sw=1+(i*71)%5000,sh=1+(i*31)%5000,w=64+(i*23)%2000,h=64+(i*19)%2000;for(const mode of ['fit','crop']){const p=placement(sw,sh,w,h,mode);assert.ok(Math.abs(p.w/p.h-sw/sh)<1e-7);if(mode==='fit')assert.ok(p.w<=w+1e-7&&p.h<=h+1e-7);else assert.ok(p.w>=w-1e-7&&p.h>=h-1e-7);}}});

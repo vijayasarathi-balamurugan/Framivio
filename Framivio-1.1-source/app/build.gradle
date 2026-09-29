@@ -1,0 +1,83 @@
+plugins { id 'com.android.application' }
+
+def conf = new Properties()
+def confFile = rootProject.file('release.properties')
+if (confFile.exists()) confFile.withInputStream { conf.load(it) }
+def setting = { key, fallback = '' -> System.getenv(key) ?: conf.getProperty(key, fallback) }
+def quoted = { value -> '"' + value.replace('\\', '\\\\').replace('"', '\\"') + '"' }
+def monetized = setting('MONETIZATION_ENABLED', 'false') == 'true'
+def signingReady = ['KEYSTORE_PATH', 'KEYSTORE_PASSWORD', 'KEY_ALIAS', 'KEY_PASSWORD'].every { setting(it) }
+
+android {
+    namespace 'com.vk.creatorfit'
+    compileSdk 36
+    defaultConfig {
+        applicationId setting('APPLICATION_ID', 'com.vk.creatorfit')
+        minSdk 29
+        targetSdk 36
+        versionCode 2
+        versionName '1.1.0'
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+        buildConfigField 'boolean', 'MONETIZATION_ENABLED', monetized.toString()
+        buildConfigField 'String', 'BILLING_PUBLIC_KEY', quoted(setting('BILLING_PUBLIC_KEY'))
+        buildConfigField 'String', 'PRO_PRODUCT_ID', quoted(setting('PRO_PRODUCT_ID', 'creatorfit_pro_lifetime'))
+        buildConfigField 'String', 'PRIVACY_URL', quoted(setting('PRIVACY_URL'))
+        buildConfigField 'String', 'SUPPORT_EMAIL', quoted(setting('SUPPORT_EMAIL'))
+    }
+    signingConfigs {
+        if (signingReady) {
+            release {
+                storeFile rootProject.file(setting('KEYSTORE_PATH'))
+                storePassword setting('KEYSTORE_PASSWORD')
+                keyAlias setting('KEY_ALIAS')
+                keyPassword setting('KEY_PASSWORD')
+            }
+        }
+    }
+    buildTypes {
+        debug {
+            applicationIdSuffix '.debug'
+            manifestPlaceholders = [admobAppId: 'ca-app-pub-3940256099942544~3347511713']
+            buildConfigField 'String', 'AD_UNIT_ID', quoted('ca-app-pub-3940256099942544/1033173712')
+        }
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            if (signingReady) signingConfig signingConfigs.release
+            manifestPlaceholders = [admobAppId: setting('ADMOB_APP_ID', 'ca-app-pub-3940256099942544~3347511713')]
+            buildConfigField 'String', 'AD_UNIT_ID', quoted(setting('ADMOB_INTERSTITIAL_ID'))
+        }
+    }
+    buildFeatures { buildConfig true }
+    compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
+    lint { abortOnError true; checkReleaseBuilds true }
+}
+
+// Never silently sign a store bundle with a debug key, or ship sample ads as production.
+tasks.register('validateReleaseConfig') {
+    doLast {
+        if (!signingReady) throw new GradleException('Release needs your KEYSTORE_PATH, KEYSTORE_PASSWORD, KEY_ALIAS and KEY_PASSWORD. See RELEASE.md.')
+        if (!setting('SUPPORT_EMAIL') || !setting('PRIVACY_URL').startsWith('https://')) throw new GradleException('Set SUPPORT_EMAIL and a published HTTPS PRIVACY_URL.')
+        if (monetized) {
+            if (!setting('ADMOB_APP_ID').startsWith('ca-app-pub-') || !setting('ADMOB_INTERSTITIAL_ID').startsWith('ca-app-pub-') || !setting('BILLING_PUBLIC_KEY')) throw new GradleException('Monetized releases require real AdMob IDs and your Play Billing public key.')
+            if (setting('ADMOB_APP_ID').contains('3940256099942544') || setting('ADMOB_INTERSTITIAL_ID').contains('3940256099942544')) throw new GradleException('Do not ship Google sample ad IDs in monetized release.')
+        }
+    }
+}
+tasks.configureEach { if (name == 'preReleaseBuild') dependsOn 'validateReleaseConfig' }
+
+dependencies {
+    implementation 'androidx.webkit:webkit:1.14.0'
+    implementation 'androidx.core:core:1.16.0'
+    implementation 'androidx.activity:activity:1.10.1'
+    implementation 'androidx.media3:media3-transformer:1.8.0'
+    implementation 'androidx.media3:media3-effect:1.8.0'
+    implementation 'androidx.media3:media3-common:1.8.0'
+    implementation 'com.android.billingclient:billing:8.0.0'
+    implementation 'com.google.android.gms:play-services-ads:24.5.0'
+    implementation 'com.google.android.ump:user-messaging-platform:3.2.0'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
+    androidTestImplementation 'androidx.test:runner:1.6.2'
+}

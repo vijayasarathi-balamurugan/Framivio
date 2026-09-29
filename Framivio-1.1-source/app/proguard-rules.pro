@@ -1,0 +1,2 @@
+-keepclassmembers class com.vk.creatorfit.MainActivity$Bridge { @android.webkit.JavascriptInterface <methods>; }
+-keepattributes *Annotation*
