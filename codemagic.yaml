@@ -1,10 +1,8 @@
 workflows:
-  android-apk:
-    name: Framivio Android APK
-    max_build_duration: 30
-
+  framivio-workflow:
+    name: Framivio APK Build
     environment:
-      java: 17
+      flutter: stable
 
     scripts:
       - name: Install dependencies
