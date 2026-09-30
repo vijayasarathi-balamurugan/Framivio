@@ -1,5 +1,5 @@
 workflows:
-  framivio-workflow:
+  framivio-apk:
     name: Framivio APK Build
     environment:
       flutter: stable
