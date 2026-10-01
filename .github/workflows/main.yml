@@ -24,23 +24,30 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Set up Gradle
+      - name: Set up Gradle 8.13
         uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.13'
 
       - name: Check Gradle
-        run: gradle --version
+        run: |
+          java -version
+          gradle --version
 
-      - name: Generate Gradle Wrapper
-        run: gradle wrapper --gradle-version 9.8
-
-      - name: Make Gradle executable
-        run: chmod +x gradlew
+      - name: Verify Android project
+        run: |
+          pwd
+          ls -la
+          test -f settings.gradle
+          test -f build.gradle
+          test -f app/build.gradle
 
       - name: Build Debug APK
-        run: ./gradlew assembleDebug --no-daemon
+        run: gradle assembleDebug --no-daemon
 
       - name: Find APK
-        run: find . -type f -name "*.apk" -print
+        run: |
+          find . -type f -name "*.apk" -print
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
