@@ -24,32 +24,23 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Install Gradle 9.5
-        run: |
-          wget -q https://services.gradle.org/distributions/gradle-9.5-bin.zip
-          unzip -q gradle-9.5-bin.zip -d "$HOME/gradle"
-          echo "$HOME/gradle/gradle-9.5/bin" >> "$GITHUB_PATH"
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
 
       - name: Check Gradle
-        run: |
-          java -version
-          gradle --version
+        run: gradle --version
 
-      - name: Verify Android project
-        run: |
-          pwd
-          ls -la
-          test -f settings.gradle
-          test -f build.gradle
-          test -f app/build.gradle
+      - name: Generate Gradle Wrapper
+        run: gradle wrapper --gradle-version 9.8
+
+      - name: Make Gradle executable
+        run: chmod +x gradlew
 
       - name: Build Debug APK
-        run: |
-          gradle assembleDebug --no-daemon
+        run: ./gradlew assembleDebug --no-daemon
 
       - name: Find APK
-        run: |
-          find . -type f -name "*.apk" -print
+        run: find . -type f -name "*.apk" -print
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
