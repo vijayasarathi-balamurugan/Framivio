@@ -24,13 +24,15 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Set up Gradle
+      - name: Set up Gradle 9.5
         uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '9.5'
 
       - name: Verify project
         run: |
           pwd
-          ls -la
+          gradle --version
           test -f settings.gradle
           test -f build.gradle
           test -f app/build.gradle
