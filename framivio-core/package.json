@@ -1,0 +1,9 @@
+{
+  "name": "framivio-core",
+  "version": "0.1.0",
+  "description": "Platform-independent geometry and validation helpers for photo and video framing.",
+  "private": false,
+  "license": "Apache-2.0",
+  "scripts": { "test": "node --test tests/js/*.test.cjs" },
+  "engines": { "node": ">=18" }
+}
