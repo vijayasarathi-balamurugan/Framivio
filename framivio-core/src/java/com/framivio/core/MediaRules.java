@@ -12,8 +12,13 @@ public final class MediaRules {
     }
 
     public static void trim(long startMs, long endMs, long durationMs) {
-        if (startMs < 0 || endMs <= startMs || endMs > durationMs + 100)
+        if (durationMs <= 0 || startMs < 0 || startMs >= durationMs || endMs <= startMs) {
             throw new IllegalArgumentException("Invalid trim range.");
+        }
+        // Preserve the existing 100 ms encoder-tolerance policy without risking overflow.
+        if (endMs > durationMs && endMs - durationMs > 100) {
+            throw new IllegalArgumentException("Invalid trim range.");
+        }
     }
 
     public static boolean safeId(String id) {

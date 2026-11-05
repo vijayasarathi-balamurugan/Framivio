@@ -24,20 +24,36 @@
   }
   function placement(sw,sh,w,h,mode='fit',x=.5,y=.5,zoom=1) {
     if (![sw,sh,w,h].every(n=>Number.isFinite(n)&&n>0)) throw Error('Invalid image dimensions');
+    if (mode !== 'fit' && mode !== 'crop') throw Error('Placement mode must be fit or crop.');
+    if (![x,y,zoom].every(n=>Number.isFinite(n))) throw Error('Placement coordinates and zoom must be finite numbers.');
     const scale=(mode==='crop'?Math.max(w/sw,h/sh):Math.min(w/sw,h/sh))*clamp(zoom,1,3);
     const dw=sw*scale, dh=sh*scale;
     return {x:(w-dw)*clamp(x,0,1)||0, y:(h-dh)*clamp(y,0,1)||0, w:dw, h:dh};
   }
   function cleanName(text) { return String(text).replace(/\.[^.]+$/, '').replace(/[^a-z0-9_-]/gi,'_').slice(0,50)||'framivio'; }
   function trim(start,end,duration) {
-    start=Number(start);end=Number(end);
-    if(!Number.isFinite(start)||!Number.isFinite(end)||start<0||end<=start||end>duration+.1) throw Error('Trim end must be after start and within the video.');
-    return {startMs:Math.round(start*1000),endMs:Math.round(Math.min(end,duration)*1000)};
+    start=Number(start); end=Number(end); duration=Number(duration);
+    if (![start,end,duration].every(Number.isFinite) || duration <= 0 || start < 0 || start >= duration || end <= start || end > duration + 0.1) {
+      throw Error('Trim range must start before the video ends and finish within the video.');
+    }
+    const endClamped=Math.min(end,duration);
+    const startMs=Math.round(start*1000), endMs=Math.round(endClamped*1000);
+    if (endMs <= startMs) throw Error('Trim range is too short after millisecond rounding.');
+    return {startMs,endMs};
   }
   function markCenter(position,x=.5,y=.5) {
-    if(position==='manual')return {x:clamp(Number(x)||0,0,1),y:clamp(Number(y)||0,0,1)};
-    if(position==='center')return {x:.5,y:.5};
-    return {x:position.endsWith('l')?.04:.96,y:position.startsWith('t')?.04:.96};
+    if(position==='manual') {
+      x=Number(x); y=Number(y);
+      if (!Number.isFinite(x) || !Number.isFinite(y)) throw Error('Manual watermark coordinates must be finite numbers.');
+      return {x:clamp(x,0,1),y:clamp(y,0,1)};
+    }
+    if(position==='center') return {x:.5,y:.5};
+    const anchors={
+      'top-left':{x:.04,y:.04}, 'top-right':{x:.96,y:.04},
+      'bottom-left':{x:.04,y:.96}, 'bottom-right':{x:.96,y:.96}
+    };
+    if (typeof position !== 'string' || !Object.prototype.hasOwnProperty.call(anchors,position)) throw Error('Unknown watermark position.');
+    return {...anchors[position]};
   }
   const api={PRESETS,clamp,size,placement,cleanName,trim,markCenter};
   if(typeof module!=='undefined') module.exports=api;
