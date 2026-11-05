@@ -1,0 +1,53 @@
+name: Framivio Core CI
+
+on:
+  push:
+    paths:
+      - "framivio-core/**"
+      - ".github/workflows/framivio-core-ci.yml"
+  pull_request:
+    paths:
+      - "framivio-core/**"
+      - ".github/workflows/framivio-core-ci.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: framivio-core-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test-core:
+    name: JavaScript and Java tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: framivio-core
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Run JavaScript tests
+        run: npm test
+
+      - name: Compile Java validation checks
+        run: |
+          mkdir -p build/java
+          javac -Xlint:all -d build/java src/java/com/framivio/core/MediaRules.java tests/java/MediaRulesCheck.java
+
+      - name: Run Java validation checks
+        run: java -cp build/java MediaRulesCheck
